@@ -98,7 +98,6 @@ https://docs.github.com/ja/apps/creating-github-apps/authenticating-with-a-githu
 
 ### 1. Json Web Token (JWT) を生成
 
-今回は `jsonwebtoken` と `axios` を使います。
 まずは JWT の Payload を作成していきます。
 GitHub の App ID と Secret key は環境変数に格納しています。
 - iat: 発行時刻
@@ -166,7 +165,7 @@ const accessToken = response.data.token
 前の手順で作成した Workflow の `event_type` と 任意の `client_payload` をパラメータとして設定します。
 ```
 await axios.post(
-  'https://api.github.com/repos/{owner}/{repository}/dispatches',
+  'https://api.github.com/repos/{owner}/{repository}/deploy',
   {
     event_type: 'ecs-deploy',
     client_payload: {
