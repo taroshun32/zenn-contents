@@ -9,9 +9,17 @@ published: true
 ## 背景
 
 プロジェクトの CI/CD を構築する際、Slack での確認ボタンを経由しつつ、外部から API 経由で GitHub Actions を実行したいという要件がありました。
-フローで言うと下記画像のような感じです。
+フローで言うと下記のような感じです。
 
-![](/images/repository-dispatch/flow.png)
+```mermaid
+sequenceDiagram
+  autonumber
+  GitHubActions->>SlackBot: メッセージを POST
+  SlackBot-->>SlackBot: POST Deploy ボタン押下
+  SlackBot-->>Lambda: lambda 起動
+  Lambda-->>GitHubActions: GitHubAction 呼び出し
+  GitHubActions-->>Server: デプロイ
+```
 
 そこで今回は Lambda から API 経由で repository_dispatch という webhook イベントをトリガーすることでこれを実現しました。
 このフローでは Lambda からトリガーしていますが、API を叩ける環境であれば何でも大丈夫です。
