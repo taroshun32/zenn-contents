@@ -165,7 +165,7 @@ const accessToken = response.data.token
 前の手順で作成した Workflow の `event_type` と 任意の `client_payload` をパラメータとして設定します。
 ```
 await axios.post(
-  'https://api.github.com/repos/{owner}/{repository}/deploy',
+  'https://api.github.com/repos/{owner}/{repository}/dispatches',
   {
     event_type: 'deploy',
     client_payload: {
