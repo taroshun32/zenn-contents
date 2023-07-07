@@ -15,7 +15,7 @@ published: true
 sequenceDiagram
   autonumber
   GitHubActions->>SlackBot: メッセージを POST
-  SlackBot-->>SlackBot: POST Deploy ボタン押下
+  SlackBot-->>SlackBot: Deploy ボタン押下
   SlackBot-->>Lambda: lambda 起動
   Lambda-->>GitHubActions: GitHubAction 呼び出し
   GitHubActions-->>Server: デプロイ
