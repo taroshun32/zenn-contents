@@ -3,7 +3,7 @@ title: "GitHub API 経由で GitHub Actions の repository_dispatch イベント
 emoji: "📝"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["GitHubActions","RepositoryDispatch"]
-published: false
+published: true
 ---
 
 ## 背景
