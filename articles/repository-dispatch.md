@@ -167,7 +167,7 @@ const accessToken = response.data.token
 await axios.post(
   'https://api.github.com/repos/{owner}/{repository}/deploy',
   {
-    event_type: 'ecs-deploy',
+    event_type: 'deploy',
     client_payload: {
       MESSAGE1: 'message 1',
       MESSAGE2: 'message 2'
