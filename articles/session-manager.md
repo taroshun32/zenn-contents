@@ -3,7 +3,7 @@ title: "[SSM] リモートホストへのポートフォワード機能を用い
 emoji: "📑"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["SessionManager","ssm","踏み台","RDS","ポートフォワード"]
-published: false
+published: true
 ---
 
 ## 背景
