@@ -3,7 +3,7 @@ title: "[serverless] @middy/ssm を用いて AWS パラメータストアから�
 emoji: "💨"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["AWS","Serverless","パラメータストア","middy","TypeScript"]
-published: false
+published: true
 ---
 
 ## 背景
