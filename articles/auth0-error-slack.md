@@ -3,7 +3,7 @@ title: "[Auth0] エラーログを Slack 通知する"
 emoji: "🌊"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["auth0","slack","eventbridge","serverless","terraform"]
-published: false
+published: true
 ---
 
 ## 概要
@@ -170,8 +170,8 @@ npm install @slack/web-api
 - `Install to Workspace` ボタンから、アプリをワークスペースにインストール
 - 作成したアプリを通知するチャンネルに追加
 
-以下の記事がとても分かりやすく参考になります。
-https://zenn.dev/kou_pg_0131/articles/slack-api-post-message
+[＠koki](https://zenn.dev/kou_pg_0131) さんの以下の記事がとても分かりやすく参考になります。
+[Slack API を使用してメッセージを投稿する](https://zenn.dev/kou_pg_0131/articles/slack-api-post-message)
 
 これで準備は整ったので、実際に関数の中身を実装していきます。
 Auth0 のログメッセージは、`event.detail` に Json 形式で入っています。
@@ -382,3 +382,7 @@ variable "auth0-event-name" {
 ここまでの手順を全て問題なく完了していれば、Auth0 で何かしらのエラーを発生させると Slack にエラーログが飛んでくるかと思います。
 
 もっとより良い構築方法などありましたらコメントで教えていただけると幸いです。
+
+## 参考
+
+- [Slack API を使用してメッセージを送信する](https://zenn.dev/kou_pg_0131/articles/slack-api-post-message)
