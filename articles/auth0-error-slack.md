@@ -324,8 +324,8 @@ https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html
 :::details Terraform で構築する場合はこちら
 ```tf: event-bridge.tf
 resource "aws_cloudwatch_event_bus" "auth0_error_log" {
-  name              = var.auth0-event-name
-  event_source_name = var.auth0-event-name
+  name              = var.auth0_event_name
+  event_source_name = var.auth0_event_name
 }
 
 resource "aws_cloudwatch_event_rule" "auth0_error_log" {
@@ -371,7 +371,7 @@ variable "aws_account_id" {
   type = string
 }
 
-variable "auth0-event-name" {
+variable "auth0_event_name" {
   type = string
 }
 ```
