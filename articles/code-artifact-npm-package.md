@@ -99,7 +99,7 @@ npm publish
 ```
 
 ```sh
-npm install @my-repository/my-repository@1.0.0
+npm install @my-repository/my-package@1.0.0
 ```
 
 CLI が無事実行できれば OK。
