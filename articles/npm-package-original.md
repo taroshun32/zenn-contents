@@ -22,6 +22,10 @@ import { hello } from 'my-package';
 hello();  // 'Hello, world!'
 ```
 
+サンプルコードは以下。
+
+https://github.com/taroshun32/npm-package-sample
+
 # 環境構築
 
 ### Node.js として初期化
@@ -56,7 +60,7 @@ npm install --save-dev typescript ts-node @types/node
 CJS モジュールとして出力するための設定を記述する。  
 dist/cjs ディレクトリに出力する。
 
-```typescript:tsconfig.cjs.json
+```json:tsconfig.cjs.json
 {
   "compilerOptions": {
     "target": "ESNext",
@@ -77,7 +81,7 @@ dist/cjs ディレクトリに出力する。
 ESM モジュールとして出力するための設定を記述する。  
 dist/esm ディレクトリに出力する。
 
-```typescript:tsconfig.esm.json
+```json:tsconfig.esm.json
 {
   "compilerOptions": {
     "target": "ESNext",
@@ -99,7 +103,7 @@ dist/esm ディレクトリに出力する。
 
 `CJS`, `ESM` それぞれの Build 用のスクリプトを用意する。
 
-```typescript:package.json
+```json:package.json
 {
   "scripts": {
     "build:cjs": "tsc --project tsconfig.cjs.json",
@@ -110,7 +114,7 @@ dist/esm ディレクトリに出力する。
 
 `CJS`, `ESM` それぞれの読み込み先ファイルの設定を追加する。
 
-```typescript:package.json
+```json:package.json
 {
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -155,7 +159,7 @@ $ tree -a -I 'node_modules'
 ├── dist
 │   └── cjs
 │       └── index.js
-├── ...
+├── ..
 ```
 
 次に `ESM`。
@@ -179,7 +183,7 @@ $ tree -a -I 'node_modules'
 │       ├── index.d.ts
 │       ├── index.d.ts.map
 │       └── index.js
-├── ...
+├── ..
 ```
 
 ここまで問題なければ NPM パッケージの作成は完了。  
