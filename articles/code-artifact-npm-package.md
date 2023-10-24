@@ -131,5 +131,5 @@ npm config set //my-domain-************.d.codeartifact.ap-northeast-1.amazonaws.
 これで作業前はシェルスクリプトの実行を行うだけで設定ができるようになる。
 
 ```sh
-sh code-artifact.sh
+sh code-artifact-setup.sh
 ```
