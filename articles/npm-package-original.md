@@ -3,7 +3,7 @@ title: "[TypeScript] 独自 NPM パッケージの作成"
 emoji: "🎉"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["typescript", "npm", "commonjs", "esmodules"]
-published: false
+published: true
 ---
 
 # 概要
