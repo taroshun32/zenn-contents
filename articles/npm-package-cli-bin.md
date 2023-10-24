@@ -79,7 +79,6 @@ $ tree -a -I 'node_modules'
 │       ├── bin
 │       │   └── index.js
 │       └── index.js
-
 ├── ..
 ```
 
