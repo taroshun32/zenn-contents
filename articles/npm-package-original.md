@@ -9,7 +9,7 @@ published: false
 # 概要
 
 自分への備忘録。  
-社内ツールとして NPM パッケージを作成した時の知見をまとめる。 
+社内ツールとして NPM パッケージを自作した時の知見をまとめる。 
 DualPackage (CJS/ESM) 対応する。
 
 ```javascript:JavaScript
@@ -53,7 +53,7 @@ npm install --save-dev typescript ts-node @types/node
 
 ### CJS 用の tsconfig.cjs.json を作成
 
-CJS モジュールとして出力するための最低限の設定を記述する。  
+CJS モジュールとして出力するための設定を記述する。  
 dist/cjs ディレクトリに出力する。
 
 ```typescript:tsconfig.cjs.json
@@ -158,7 +158,7 @@ $ tree -a -I 'node_modules'
 ├── ...
 ```
 
-次に `ESM`
+次に `ESM`。
 
 ```sh
 $ npm run build:esm
