@@ -26,7 +26,7 @@ https://registry.terraform.io/providers/auth0/auth0/latest/docs
 
 ## 1. State の管理下から削除
 
-まず breaking changes の中でもあらかじめ terraform の管理外にしておく必要のあるリソースがいくつかあったため、state 管理下からの削除を実行。
+まず breaking changes の中でもあらかじめ terraform の管理外にしておく必要のあるリソースがいくつかあったため、state 管理下からの削除を実行。(リソース名が変わるものはそのままの移行が不可能)  
 自分の場合は以下が対象だった。
 
 :::message
