@@ -15,7 +15,8 @@ AWS 部分は terraform で構築する。
 以前に別記事で作成した以下の NPM パッケージを使用する。
 
 https://github.com/taroshun32/npm-package-sample
-※ ここにリンクを設定
+
+https://zenn.dev/taroshun32/articles/npm-package-original
 
 # CodeArtifact を作成
 
@@ -114,7 +115,7 @@ Hello, world!
 
 認証トークンの設定を都度手動で行うのは手間なため、設定用のシェルスクリプトを用意すると良さそう。
 
-```sh:code-artifact-setup.sh
+```sh:code-artifact-login.sh
 #!/bin/bash
 
 # CodeArtifactの認証トークンを取得
@@ -131,5 +132,5 @@ npm config set //my-domain-************.d.codeartifact.ap-northeast-1.amazonaws.
 これで作業前はシェルスクリプトの実行を行うだけで設定ができるようになる。
 
 ```sh
-sh code-artifact-setup.sh
+sh code-artifact-login.sh
 ```

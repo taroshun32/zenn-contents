@@ -19,13 +19,28 @@ Hello, world!
 
 以前に以下の記事で作成した NPM パッケージに追記する形で作成する。
 
-※ ここにリンクを設定
+https://zenn.dev/taroshun32/articles/npm-package-original
 
 サンプルコードは以下。
 
 https://github.com/taroshun32/npm-package-sample
 
 # 手順
+
+### ソースコードの実装
+
+```sh
+$ mkdir -p src/bin
+% touch src/bin/index.ts
+```
+
+`Hello, world!` と出力するだけの Node.js スクリプトを用意する。
+
+```typescript:src/bin/index.ts
+#!/usr/bin/env node
+
+console.log('Hello, world!')
+```
 
 ### package.json に CLI 用の設定を追加
 
@@ -43,21 +58,6 @@ ESM では必要ないため、`exclude` に `src/bin` を追加。(`node_module
 
 ```json:tsconfig.esm.json
 "exclude": ["src/bin", "node_modules", "dist"]
-```
-
-### ソースコードの実装
-
-```sh
-$ mkdir -p src/bin
-% touch src/bin/index.ts
-```
-
-`Hello, world!` と出力するだけの Node.js スクリプトを用意する。
-
-```typescript:src/bin/index.ts
-#!/usr/bin/env node
-
-console.log('Hello, world!')
 ```
 
 # ビルドを実行
