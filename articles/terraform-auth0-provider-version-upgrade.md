@@ -3,7 +3,7 @@ title: "terraform provider auth0 の v1.0.0 がリリース！"
 emoji: "🎉"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["terraform", "auth0", "okta"]
-published: false
+published: true
 ---
 
 # 概要
