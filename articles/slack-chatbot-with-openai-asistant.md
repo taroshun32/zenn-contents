@@ -3,7 +3,7 @@ title: "OpenAI Assistants API で Slack チャットボットを構築する"
 emoji: "🤖"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["ai", "openai", "chatgpt", "assistantsapi", "slack"]
-published: false
+published: true
 ---
 
 # 概要
