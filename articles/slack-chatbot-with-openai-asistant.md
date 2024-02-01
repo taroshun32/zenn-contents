@@ -35,7 +35,7 @@ OpenAI の Assistants API は現在まだベータ版です。
 # フロー
 
 今回構築するシステムのフローです。
-Assistant の生成は予めダッシュボードから済ませておく前提で構築してます。
+Assistant の生成は予め OpenAI のダッシュボードから済ませておく前提で構築してます。
 Lambda 関数は OpenAI の Node.js SDK を使用し、TypeScript で記述してます。
 
 ```mermaid
@@ -153,7 +153,7 @@ case 'event_callback': {
 ```
 
 :::message
-認証キーなどの秘密情報は AWS のパラメータストアに格納しており、middy というライブラリを使用して Context に格納しています。
+認証キーなどの秘密情報は AWS のパラメータストアに格納しており (後述)、middy というライブラリを使用して Context に格納しています。
 middy に関しては別記事で解説しているので、詳細は以下をご参照ください。
 https://zenn.dev/taroshun32/articles/serverless-middy-ssm
 :::
