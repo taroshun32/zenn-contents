@@ -18,6 +18,11 @@ GPTs も便利ですが、Slack 上でチャットできるようにすること
 実装コードは下記リポジトリにあります。
 https://github.com/taroshun32/slack-chatbot-with-openai-assistant
 
+:::message
+OpenAI の Assistants API は現在まだベータ版です。
+また、今回の記事では Function Calling に関しては未対応となります。
+:::
+
 # 前提
 
 この記事では、以下の技術を使用して構築を行います。
@@ -26,8 +31,6 @@ https://github.com/taroshun32/slack-chatbot-with-openai-assistant
 - [Serverless (Lambda)](https://www.serverless.com/)
 - [Terrraform (AWS)](https://www.terraform.io/)
 - [SlackAPI](https://api.slack.com/lang/ja-jp)
-
-また、今回は Function Calling に関しては未対応となります。
 
 # フロー
 
