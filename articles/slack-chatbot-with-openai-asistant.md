@@ -8,14 +8,14 @@ published: false
 
 # 概要
 
-OpenAI AssistantsAPI は独自のアプリケーションに AI アシスタントを構築できる機能です。
+OpenAI AssistantsAPI を使用すると、独自のアプリケーションに AI アシスタントを組み込むことができます。
 
 https://platform.openai.com/docs/assistants/overview
 
 今回は AssistantsAPI を使用して Slack 上で AI とチャットができる環境を構築したので、その構築手順を書いてみたいと思います。
-GPTs も便利ですが、Slack 上でチャットできるようにすることで、ChatGPT のプラン関係なくワークスペースに参加している人は誰でも使用することが可能となります。(GPTs と違って従量課金になるのでその点は注意が必要です。)
+GPTs も便利ですが、Slack 上でのチャットを可能にすることで、ChatGPT のプランに関係なくワークスペースの全てのメンバーが AI アシスタントを使用できます。(GPTs と違って従量課金になるのでその点は注意が必要です。)
 
-実装コードは下記リポジトリにあります。
+実装コードは以下のリポジトリにあります。
 https://github.com/taroshun32/slack-chatbot-with-openai-assistant
 
 :::message
@@ -36,7 +36,7 @@ OpenAI の Assistants API は現在まだベータ版です。
 
 今回構築するシステムのフローです。
 Assistant の生成は予めダッシュボードから済ませておく前提で構築してます。
-Lambda 関数は OpenAI の Node.js SDK を使用して TypeScript で記述してます。
+Lambda 関数は OpenAI の Node.js SDK を使用し、TypeScript で記述してます。
 
 ```mermaid
 sequenceDiagram
@@ -83,20 +83,20 @@ sequenceDiagram
 ❯ serverless create --template aws-nodejs-typescript
 ```
 
-すべてのコードを解説することは不可能なので、重要な部分を抽出して解説します。
+全てのコードを詳細に解説することは難しいため、重要な部分だけを抽出して解説します。
 
 ## SlackCallback (Lambda関数)
 
 SlackApp へのメンションをトリガーに呼び出される関数です。
 この関数の役割は、後続の RunAssistant (Lambda関数) を呼び出すだけです。
-SlackApp のコールバックのタイムアウトに引っかからないようにこのような構成となってます。
+SlackApp のコールバックがタイムアウトしないようにこのような構成としてます。
 
 [slack-callback > handler.ts](https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/serverless/src/functions/slack-callback/handler.ts)
 ::::details 全コードはこちら
 https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/serverless/src/functions/slack-callback/handler.ts
 ::::
 
-Slack からの URL 検証用イベントである、`url_verification` にも対応しています。
+Slack からの URL 検証用イベントである `url_verification` にも対応しています。
 これは後述する SlackApp の設定の際に必要です。
 
 ```ts
@@ -110,8 +110,8 @@ case 'url_verification':
   }
 ```
 
-SlackApp へのメンションをトリガーに呼び出される `event_callback` イベントの際は、認証トークンの検証の後、RunAssistant 関数を非同期で Invoke しています。
-その際レスポンスの生成には時間がかかるため、予めトリガー元のスレッドに「お待ちください」スタンプをつけるようにしています。
+SlackApp へのメンションをトリガーに呼び出される `event_callback` イベントの際は、認証トークンの検証を実施後、RunAssistant 関数を非同期で Invoke しています。
+その際レスポンスの生成には時間がかかるため、事前にトリガー元のスレッドに「お待ちください」のスタンプを付けています。
 
 ```ts
 case 'event_callback': {
@@ -153,7 +153,7 @@ case 'event_callback': {
 ```
 
 :::message
-認証キーなどの秘匿情報は AWS のパラメータストアに格納するようにしており、middy というライブラリを使用して Context に格納しています。
+認証キーなどの秘密情報は AWS のパラメータストアに格納しており、middy というライブラリを使用して Context に格納しています。
 middy に関しては別記事で解説しているので、詳細は以下をご参照ください。
 https://zenn.dev/taroshun32/articles/serverless-middy-ssm
 :::
@@ -200,7 +200,7 @@ async function postMessage(slackClient: WebClient, event: RunAssistantEvent, tex
 
 AssistantsAPI を実行し、応答メッセージを取得する関数です。
 まず createOrGetThread 関数 (後述) を呼び出して openai の thread を取得し、スレッドの実行状態の確認を行います。
-スレッドが実行中の場合は処理を中断し、Slack にエラーメッセージを返却しています。
+スレッドが実行中の場合は処理を中断し、エラーをスローしています。
 
 ```ts
 const assistant = await openai.beta.assistants.retrieve(assistantId)
@@ -223,35 +223,8 @@ const fileIds = await Promise.all(
   })
 )
 ```
-
-```ts:download-file-from-slack.ts
-export const downloadFileFromSlack = async (slackClient: WebClient, fileId: string): Promise<string> => {
-  const file  = await slackClient.files.info({ file: fileId })
-  const url   = file.file.url_private
-  const token = slackClient.token
-
-  const response = await axios.get(url, {
-    headers:      { Authorization: `Bearer ${token}` },
-    responseType: 'arraybuffer',
-  })
-
-  const filePath = path.join('/tmp', fileId)
-  fs.writeFileSync(filePath, response.data)
-
-  return filePath
-}
-```
-
-```ts:upload-file-to-openai.ts
-export const uploadFileToOpenAI = async (openai: OpenAI, filePath: string) => {
-  const file = await openai.files.create({
-    file:    fs.createReadStream(filePath),
-    purpose: "assistants",
-  })
-
-  return file.id
-}
-```
+https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/serverless/src/libs/download-file-from-slack.ts
+https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/serverless/src/libs/upload-file-to-openai.ts
 
 次にスレッドにメッセージを追加します。
 先ほどのファイルが存在する場合は、ここで同時に FileIds を連携します。
@@ -356,7 +329,7 @@ async function checkRunStatus(openai: OpenAI, threadId: string, runId: string) {
 
 ## デプロイ
 
-ここまででコードの実装は完了なので、以下 Serverless のコマンドで AWS の環境にデプロイしておきましょう。
+ここまででコードの実装は完了なので、以下 Serverless のコマンドで Lambda 関数を AWS の環境にデプロイしておきましょう。
 その際ログの `Stack Outputs` に吐かれる `HttpApiUrl` は後述する Slack のコールバック URL の設定で必要なので控えておいて下さい。
 
 ```sh
@@ -379,7 +352,7 @@ https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/terr
 
 次に必要な認証情報を作成します。
 今回作成するのは Serverless (Lambda関数) に付与するロールです。
-以下 [serverless.ts](https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/serverless/serverless.ts) で指定しています。
+ここで作成する `serverless_role` は、以下 [serverless.ts](https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/serverless/serverless.ts) で指定しています。
 ```ts
 const serverlessConfiguration: AWS = {
   provider: {
@@ -401,6 +374,20 @@ const serverlessConfiguration: AWS = {
 | `dynamodb:GetItem`<br>`dynamodb:PutItem` | 特定の DynamoDB テーブルのレコードを取得し、レコードを追加または置き換えることを許可します。 |
 
 https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/terraform/aws/iam.tf
+
+## パラメータストア
+
+次に以下の4つの秘密情報を AWS のパラメータストアに格納します。
+これらはコード管理できないので手動で設定します。
+
+| パラメータ名 | 説明 | 取得箇所 |
+| --- | --- | --- |
+| OPENAI_API_KEY | OpenAI との通信に使用する API キー | OpenAI ダッシュボード |
+| OPENAI_ASSISTANT_ID | OpenAI ダッシュボードで作成した Assistant の ID | OpenAI ダッシュボード |
+| SLACK_BOT_TOKEN | Slack API を使用するための認証情報 | SlackApp の設定画面 |
+| SLACK_VERIFICATION_TOKEN | Slack からのリクエストの検証に使用するトークン | SlackApp の設定画面 |
+
+これで AWS のリソースの構築は完了です。
 
 # OpenAI
 
@@ -460,8 +447,10 @@ Snbscripe to bot events では `app_mention` を選択して下さい。
 
 ![](/images/slack-chatbot-with-openai-assistant/slack-chat.png  =1200x)
 
+# まとめ
+
 実際の業務では、社内ドキュメントなどを基にした回答を生成するようにプロンプトを調整することで、様々な場面で有効活用できそうですね。
-メッセージの stream 生成なども今後対応予定らしいので、対応されたら試してみたいと思います。
+AssistantsAPI ではメッセージのストリーム生成なども今後対応予定らしいので、対応されたら試してみたいと思います。
 
 # 参考
 
