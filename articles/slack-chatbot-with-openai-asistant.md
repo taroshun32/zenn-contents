@@ -406,7 +406,7 @@ https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/terr
 
 ![](/images/slack-chatbot-with-openai-assistant/openai-assistant.png)
 
-設定できたら以下を AWS のパラメータストアに設定しておいて下さい。
+設定できたら以下を AWS のパラメータストアに設定して下さい。
 
 - OpenAI API Key
 - Assistant ID
@@ -414,7 +414,7 @@ https://github.com/taroshun32/slack-chatbot-with-openai-assistant/blob/main/terr
 # SlackApp
 
 最後に SlackApp の設定を行います。
-簡単な流れだけの説明に留めるので、詳細な手順は以下の公式ドキュメントをご確認ください。
+ここでは簡単な流れだけを説明しますので、詳細な手順については以下の公式ドキュメントをご覧ください。
 
 https://api.slack.com/start/quickstart
 
@@ -425,7 +425,7 @@ Event Subscriptions の設定を行います。
 まず、RequestURL にデプロイの際に控えておいた `HttpApiUrl` を設定します。
 その際に `url_verification` イベントが走り、URLの検証が行われるはずです。
 
-Snbscripe to bot events には `app_mention` を選択して下さい。
+Snbscripe to bot events では `app_mention` を選択して下さい。
 この設定を行うことで、SlackApp へのメンションをトリガーとして SlackCallback 関数が呼ばれるようになります。
 
 ![](/images/slack-chatbot-with-openai-assistant/slack-event-subscription.png)
@@ -445,11 +445,11 @@ Snbscripe to bot events には `app_mention` を選択して下さい。
 ![](/images/slack-chatbot-with-openai-assistant/slack-permission.png  =1200x)
 
 最後に SlackApp をワークスペースにインストールし、任意のチャンネルに招待しておきます。
-また、以下を AWS のパラメータストアに設定しておきましょう。
+また、以下を AWS のパラメータストアに設定しましょう。
 - Verification Token
 - Bot User OAuth Token
 
-これですべての設定は終了です。
+これですべての設定が完了です。
 
 # チャットを実行
 
@@ -457,5 +457,9 @@ Snbscripe to bot events には `app_mention` を選択して下さい。
 
 ![](/images/slack-chatbot-with-openai-assistant/slack-chat.png  =1200x)
 
-実際の業務では、社内ドキュメントなどを元に回答してくれるようにプロンプトを調整すれば色々と有効活用できそうですね。
+実際の業務では、社内ドキュメントなどを基にした回答を生成するようにプロンプトを調整することで、様々な場面で有効活用できそうですね。
 メッセージの stream 生成なども今後対応予定らしいので、対応されたら試してみたいと思います。
+
+# 参考
+
+- [SlackとOpenAI Assistants APIでGitHubのPRレビューを効率化する](https://developer.mamezou-tech.com/blogs/2023/12/06/slack-github-assistantsapi/)
