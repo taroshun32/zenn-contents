@@ -3,7 +3,7 @@ title: "CLI ツール用の NPM パッケージの作成"
 emoji: "🌟"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["typescript", "npm", "cli"]
-published: true
+published: false
 ---
 
 # 概要
