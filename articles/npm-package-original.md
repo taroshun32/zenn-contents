@@ -26,11 +26,6 @@ hello();  // 'Hello, world!'
 
 https://github.com/taroshun32/npm-package-sample
 
-:::message
-当時すごくわかりやすく解説されていた無料の Book があったのだが、なぜか削除(非公開)されてしまっているため、当時の実装を元にまとめた。
-test や lint の設定まで綺麗にまとまっていたのでまた公開されてほしい。。
-:::
-
 # 環境構築
 
 ### Node.js として初期化
