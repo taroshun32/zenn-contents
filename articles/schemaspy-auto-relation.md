@@ -3,7 +3,7 @@ title: "リレーション定義のないDBからも自動でER図を作成し�
 emoji: "📝"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["db", "mysql", "schemaspy", "er図", "shell"]
-published: false
+published: true
 ---
 
 ## 概要
