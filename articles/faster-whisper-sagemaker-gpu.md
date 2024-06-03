@@ -117,6 +117,11 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_full_access" {
 https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/async-inference.html
 https://github.com/aws-samples/aws-ml-jp/tree/main/sagemaker/sagemaker-inference/inference-tutorial
 
+構成図は以下です。
+ECRにベースイメージ、S3にモデルと推論コードを配置します。
+
+![](/images/faster-whisper-sagemaker-gpu/sagemaker.drawio.png)
+
 ### 1. ベースイメージの作成
 
 今回は、SageMakerが公式に提供しているPyTorchの推論用Dockerイメージをベースに使用します。
