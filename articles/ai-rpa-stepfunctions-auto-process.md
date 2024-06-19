@@ -88,7 +88,7 @@ sequenceDiagram
 
 ### Step-3: AIでの処理
 
-今回はファイルの内容を読み取る必要があるのですが、OpenAI単体での日本語文字列の抽出はまだ完璧ではないので、Azure AI VisionのRead APIを使用してOCR処理を実行しています。
+今回はファイルの内容を読み取る必要があるのですが、OpenAIのAPI単体での日本語文字列の抽出はまだ完璧ではないので、Azure AI VisionのRead APIを使用してOCR処理を実行しています。
 その後、OCRした文字列をOpenAIのAPIに渡し、特定の処理を実行します。
 
 https://learn.microsoft.com/ja-jp/azure/ai-services/computer-vision/overview
@@ -234,6 +234,10 @@ events: [
   }
 ],
 ```
+
+EventBridgeのcron式は少し特殊なので、詳細は以下を参照ください。
+
+https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-cron-expressions.html
 
 ### Waitステート & Choiceステートでのポーリング
 
