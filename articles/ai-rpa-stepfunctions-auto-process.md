@@ -4,7 +4,7 @@ emoji: "🤖"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["AI", "RPA", "stepfunctions", "lambda", "automation"]
 publication_name: "nextbeat"
-published: false
+published: true
 ---
 
 ## 概要
