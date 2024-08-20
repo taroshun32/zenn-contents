@@ -207,7 +207,7 @@ resource "google_service_account_iam_binding" "workload_identity_binding_aws_lam
   service_account_id = google_service_account.lambda_sa.name
   role               = "roles/iam.workloadIdentityUser"
   members            = [
-    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.id_pool.name}/attribute.aws_role/arn:aws:sts::${var.aws_id}:assumed-role/lambda_role",
+    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.id_pool.name}/attribute.aws_role/arn:aws:sts::${var.aws_id}:assumed-role/lambda-role",
   ]
 }
 ```
