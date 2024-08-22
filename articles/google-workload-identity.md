@@ -22,12 +22,12 @@ Workload Identity連携は、AWSやAzure等の外部IDプロバイダ（IdP）�
 2. IdPから得たクレデンシャルをGoogleのセキュリティトークンサービス（STS）に渡し、アクセストークンを取得します。
 3. 2のアクセストークンを用いてサービスアカウントの権限を借用し、Google Cloudのリソースにアクセスします。
 ![](/images/google-workload-identity/workload-identity.png)
+> 引用：[YouTube「What is Workload Identity Federation?」](https://youtu.be/4vajaXzHN08)
 
 上記の処理の流れを実現するために、以下の設定が必要となります。(構築手順は後述します)
 1. Workload Identity PoolにIdentity Providerを登録しておきます。
 2. Workload Identity PoolのIdentityがサービスアカウントの権限を借用できるよう、必要な権限を設定しておきます。
 ![](/images/google-workload-identity/workload-identity2.png)
-
 > 引用：[YouTube「What is Workload Identity Federation?」](https://youtu.be/4vajaXzHN08)
 
 今回構築するAWSのケースでは、LambdaがAWS STSから取得した一時的な認証情報を使用して、Google Cloudのセキュリティトークンサービス（STS）エンドポイントを呼び出します。STSエンドポイントはこのトークンを検証し、有効期限の短いGoogleのアクセストークンと交換します。このアクセストークンを使用して、LambdaはGoogle Cloudおよび関連するGoogleサービスのリソースにアクセスできます。
@@ -65,7 +65,7 @@ https://cloud.google.com/iam/docs/workload-identity-federation-with-other-clouds
 以下のドキュメントに記載のある通り、Google Cloudリソースの操作に関してはサービスアカウントを使用せずに、外部IDに直接アクセスを許可できます。
 https://cloud.google.com/iam/docs/workload-identity-federation?hl=ja#direct-resource-access
 
-BigQueryやCloud StorageといったGoogle Cloudリソース操作に限ればこちらの方法が推奨されているようですが、今回は以下のような他のGoogleサービスも操作できるよう、サービスアカウントの権限借用を使用して構築しました。
+BigQueryやCloud StorageといったGoogle Cloudリソース操作に限ればこちらの方法が推奨されているようですが、今回は以下のような他のGoogleサービスも操作できるよう、サービスアカウントを使用して構築しました。
 
 - Google Drive
 - Google Analytics
@@ -90,7 +90,7 @@ https://cloud.google.com/iam/docs/federated-identity-supported-services?hl=ja#li
    1. Workload Identityプールの設定
    2. Workload Identityプロバイダの設定
    3. サービスアカウントをプロバイダと接続
-- [Lambda] Workload Identityの構成情報（Jsonファイル）を使用して認証処理
+- [Lambda] 構成情報（Jsonファイル）を使用して認証処理
 
 順番に詳しく解説していきます。
 
@@ -220,7 +220,7 @@ resource "google_service_account_iam_binding" "workload_identity_binding_aws_lam
 ```json
 {
   "type": "external_account",
-  "audience": "//iam.googleapis.com/projects/<プロジェクト番号>/locations/global/workloadIdentityPools/aws-id-pool-1/providers/aws-provider",
+  "audience": "//iam.googleapis.com/projects/<プロジェクト番号>/locations/global/workloadIdentityPools/id-pool/providers/aws-connect",
   "subject_token_type": "urn:ietf:params:aws:token-type:aws4_request",
   "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/lambda-sa@<プロジェクトID>.iam.gserviceaccount.com:generateAccessToken",
   "token_url": "https://sts.googleapis.com/v1/token",
@@ -236,7 +236,7 @@ resource "google_service_account_iam_binding" "workload_identity_binding_aws_lam
 
 これでGoogle Cloudでの設定は完了です。
 
-### [Lambda] Workload Identityの構成情報（Jsonファイル）を使用して認証処理
+### [Lambda] 構成情報（Jsonファイル）を使用して認証処理
 
 準備が整ったので、実際にLambdaからWorkload Identity連携を使用して、Googleサービスを操作してみます。
 まず、先ほどダウンロードしたJsonファイルをLambda内に配置し、ファイルのパスを環境変数 `GOOGLE_APPLICATION_CREDENTIALS` に設定します。
