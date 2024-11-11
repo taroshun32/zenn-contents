@@ -1,6 +1,6 @@
 ---
-title: "[コスト削減] RDSのログをS3にダイレクトで自動転送する"
-emoji: "🤖"
+title: "[コスト削減] RDSのログを自動でS3に直接転送する"
+emoji: ⚙️
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["コスト削減", "AWS", "RDS", "LOG", "S3"]
 publication_name: "nextbeat"
@@ -49,7 +49,7 @@ my-rds-cluster/audit/2024/10/01/12/instance-1/audit.log.2024-10-01-12-00.0.gz
 ## サンプルコード
 
 https://github.com/taroshun32/aurora-mysql-log-archive
-SAMを使用してLambda関数で作成してます。今回は実装コードの概要だけ簡単に解説します。
+SAMを使用して作成してます。今回は実装コードの概要だけ簡単に解説します。
 
 ## 実装の詳細
 
@@ -197,7 +197,7 @@ def main(event, context):
 
 ### 1. audit-logファイルの一覧取得
 
-RDS APIを使用して直近更新されたaudit-logファイル名の一覧を取得します。
+RDSのAPIを使用して直近更新されたaudit-logファイル名の一覧を取得します。
 また、指定した時間範囲内に更新されたファイルをフィルタリングします。
 
 ```python
@@ -250,6 +250,8 @@ except s3_client.exceptions.ClientError as e:
 ...
 ```
 
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/head_object.html
+
 ### 3. ログファイルのダウンロード
 
 RDSからログファイルをダウンロードするために、署名付きURLを生成します。
@@ -277,6 +279,8 @@ with urllib.request.urlopen(req) as response:
 if len(log_data) == 0:
     print(f"Log file {log_file_name} is empty. Skipping.")
     continue
+
+...
 ```
 
 今回使用したファイルダウンロード用APIの詳細に関しては以下を参照してください。
