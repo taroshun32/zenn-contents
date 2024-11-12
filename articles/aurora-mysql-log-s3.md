@@ -4,17 +4,18 @@ emoji: ⚙️
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["コスト削減", "AWS", "RDS", "LOG", "S3"]
 publication_name: "nextbeat"
-published: false
+published: true
 ---
 
 ## 概要
 
 RDSのログファイルは、デフォルトでは一定期間後に削除されます。
-https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.MySQL.LogFileSize.html
-
 監査やトラブル対応のために長期保存する場合、CloudWatch Logsを経由してS3に保存する方法を採用するケースが一般的だと思いますが、この方法ではデータ転送で中々のコストが発生します。
 
 このコスト削減を目的として、RDSのログファイルを直接S3へ転送する自動化スクリプトをPythonで作成してみたので、自分への備忘録として残しておきます。
+今回は監査ログ（audit-log）のみ対応します。その他のログやローテーション期間の詳細については、以下公式ドキュメントを参照してください。
+
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.MySQL.LogFileSize.html
 
 ## アーキテクチャ
 
