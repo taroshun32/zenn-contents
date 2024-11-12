@@ -2,7 +2,7 @@
 title: "Faster WhisperとAWS SageMakerを活用してGPUでの高速文字起こしエンドポイントを構築する"
 emoji: "💬"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["ai", "whisper", "sagemaker", "aws", "python" ]
+topics: ["ai", "whisper", "sagemaker", "aws", "contest2024" ]
 publication_name: "nextbeat"
 published: true
 ---
