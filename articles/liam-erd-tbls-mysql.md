@@ -102,3 +102,7 @@ https://taroshun32.github.io/liam-erd-tbls-sample/
 Liam ERDを使用することで、手軽にER図を自動生成できることが分かりました。
 特にtblsと組み合わせることで、MySQLのスキーマ情報から迅速にER図を作成できます。パブリックなプロジェクトではURLを工夫するだけで簡単に共有でき、プライベートなプロジェクトでもCLIツールを利用して安全にER図を生成・共有できます。
 業務でのデータベース設計やチーム内での情報共有にも役立ちそうなので、今後活用していこうと思います。
+
+## 参考
+
+- [Liam ERDで綺麗でインタラクティブなER図を自動生成する](https://zenn.dev/route06/articles/liam-erd-introduction)
