@@ -59,7 +59,7 @@ https://liambx.com/erd/p/github.com/taroshun32/liam-erd-tbls-sample/blob/main/sc
 非常に簡単ですね！
 Liam ERDのいいところは、テーブルにマウスオーバーすると関連するテーブルと列が強調表示されるところです。どうしてもテーブルの数が多いとごちゃごちゃしてしまうので、この機能は大変助かります。
 
-![](/images/liam-erd-tbls-mysql/liam-erd-1.png)
+![](/images/liam-erd-tbls-mysql/liam-erd.png)
 
 ### プライベートプロジェクトの場合
 
