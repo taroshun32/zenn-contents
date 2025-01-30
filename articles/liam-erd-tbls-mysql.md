@@ -49,7 +49,7 @@ mysql -h 127.0.0.1 -P 3306 -u root -ppassword < sakila-schema.sql
 brew install k1LoW/tap/tbls
 
 # tblsコマンドでJSON形式のスキーマファイルを生成
-tbls out --format json mysql://root:password@localhost:3306/sakila > schema.json
+tbls out --format json mysql://root:password@127.0.0.1:3306/sakila > schema.json
 ```
 
 リポジトリにPush後は、以下のようにスキーマファイルの先頭に `https://liambx.com/erd/p/` をつけるだけです。
