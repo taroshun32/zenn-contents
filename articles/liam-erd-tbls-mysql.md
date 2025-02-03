@@ -15,6 +15,10 @@ https://liambx.com/blog/liam-erd-introduction
 気になっていたものの、MySQLに対応していなかったので一旦様子見していたのですが、tbls経由でのサポートが発表されたので触ってみます。
 https://liambx.com/blog/liam-erd-with-tbls
 
+元々対応していたPostgreSQLなどに加えて、tblsがサポートするSQLiteやBigQueryなどにも対応したようです。以下の図がわかりやすいですね。
+![](/images/liam-erd-tbls-mysql/liam-format.png)
+> 引用：[Announcing Liam ERD Integration with tbls」](https://liambx.com/blog/liam-erd-with-tbls)
+
 ## Liam ERDとは
 
 OSSのER図自動生成ツールで、SchemaSpyなどに似ていますが、セットアップがより簡単で可読性が高いです。
