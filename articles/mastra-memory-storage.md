@@ -395,11 +395,10 @@ const agent = new Agent({
 
 // Slackイベントハンドラー
 async function handleSlackMessage(event: SlackEvent) {
-  const threadId = event.thread_ts || event.ts; // Slackスレッドタイムスタンプ
-  const userId = event.user; // SlackユーザーID
-  const channelId = event.channel; // SlackチャンネルID
+  const threadId = event.thread_ts; // Slackスレッドタイムスタンプ
+  const userId = event.user;        // SlackユーザーID
+  const channelId = event.channel;  // SlackチャンネルID
 
-  // Memory設定: チャンネル単位でユーザー横断的な記憶を共有
   await agent.generate(event.text, {
     memory: {
       resource: channelId, // チャンネル全体で記憶を共有
