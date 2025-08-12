@@ -375,6 +375,24 @@ const memory = new Memory({
 Slackには**スレッド**という概念があるので、これをMastraのThread IDとして活用できます。
 
 ```typescript
+// Memory設定（チャンネル単位でWorking Memory共有）
+const memory = new Memory({
+  storage: dynamodbStorage,
+  options: {
+    lastMessages: 30,   // 各スレッド内の履歴
+    workingMemory: {
+      enabled: true,
+      scope: 'resource' // チャンネル全体で共有
+    }
+  }
+});
+
+const agent = new Agent({
+  name: 'slack-bot',
+  model: gpt4o,
+  memory: memory
+});
+
 // Slackイベントハンドラー
 async function handleSlackMessage(event: SlackEvent) {
   const threadId = event.thread_ts || event.ts; // Slackスレッドタイムスタンプ
@@ -396,6 +414,10 @@ async function handleSlackMessage(event: SlackEvent) {
   });
 }
 ```
+
+この設定により、以下が可能となります。
+- **各Slackスレッド内**: 最新30件の会話履歴を保持
+- **チャンネル全体**: プロジェクト情報、チームメンバー、決定事項などをWorking Memoryで共有
 
 # まとめ
 
