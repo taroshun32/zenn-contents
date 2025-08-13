@@ -213,7 +213,9 @@ const memory = new Memory({
 Semantic Recallは、**セマンティック検索を使って関連する過去の会話を自動的に思い出す機能**です。通常の会話履歴（lastMessages）から外れた古いメッセージでも、意味的に関連する内容を検索してAIのコンテキストに含めます。
 
 :::message alert
-Semantic Recallを使用するには、Storageとは別にVector Storeの設定が必須です。
+Semantic Recallを使用するには、Storageとは別に以下の2つが必須です。
+1. Vector Store - セマンティック検索
+2. Embedder - テキストの埋め込み
 :::
 
 ### 動作の流れ
@@ -235,13 +237,12 @@ Semantic Recallを使用するには、Storageとは別にVector Storeの設定�
 ```ts
 import { Memory } from '@mastra/memory';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { fastembed } from '@mastra/fastembed';
 
 const memory = new Memory({
-  storage: storage,            // メッセージ保存用
-  vector: pinecone,            // セマンティック検索用（必須）
-  embedder: openai.embedding(  // 埋め込みモデル（オプション）
-    'text-embedding-3-small'
-  ),
+  storage: storage,     // メッセージ保存用
+  vector: pinecone,     // セマンティック検索用（必須）
+  embedder: fastembed,  // 埋め込みモデル（必須）
   options: {
     lastMessages: 20,
     semanticRecall: {
