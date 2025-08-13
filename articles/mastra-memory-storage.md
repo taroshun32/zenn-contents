@@ -379,6 +379,7 @@ await agent.generate(query, {
 const memory = new Memory({
   storage: dynamodbStorage,
   vector: pinecone,
+  embedder: fastembed,
   options: {
     lastMessages: 15,
     semanticRecall: {
