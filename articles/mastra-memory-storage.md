@@ -11,7 +11,7 @@ published: false
 
 AIチャットボットやエージェントを構築する際、最も重要な要素の一つが「記憶」です。ユーザーとの過去の会話を記憶し、文脈を理解した上で継続利用するためには、適切なメモリシステムが不可欠です。
 
-筆者も最近、業務効率化や社内AIエージェント構築を行う機会が増えていますが、毎回メモリシステムの構築に苦戦しています。そこで今回は、MastraのMemory機能を詳しく深掘りし、実践的な実装パターンまで含めて理解を深める目的でまとめてみます。
+筆者も最近、社内AIエージェント構築を行う機会が増えていますが、毎回メモリシステムの構築に苦戦しています。そこで今回は、MastraのMemory機能を詳しく深掘りし、実践的な実装パターンまで含めて理解を深める目的でまとめてみます。
 
 https://mastra.ai/ja/docs/memory/overview
 
@@ -19,8 +19,7 @@ https://mastra.ai/ja/docs/memory/overview
 本記事は以下のバージョンに基づいて執筆しています。
 - `@mastra/memory`: v0.12.1
 - `@mastra/core`: v0.13.1
-- `@mastra/dynamodb`: v0.14.0
-:::
+  :::
 
 # Mastra Memoryとは
 
@@ -28,32 +27,32 @@ Mastra Memoryは、AIエージェントの会話管理に特化した包括的�
 
 1.  **会話履歴の管理**  - メッセージの保存・取得・管理
 2.  **Working Memory**  - スレッド横断的な永続記憶
-3.  **Semantic Recall**  - 関連する過去の会話を検索
+3.  **Semantic Recall**  - 意味的に関連する過去の会話を検索
 4.  **メモリプロセッサ**  - メッセージの前処理・最適化
 
 # アーキテクチャ
 
-## 3層構造
+Mastra Memoryは3層のシンプルな構造で、各層が明確に分離されています。
 
 ```
 ┌─────────────────────┐
-│       Memory　　   　│ ← 上記4つの主要機能を提供する高レベルAPI
+│       Memory        │ ← 統一されたAPI、4つの主要機能を提供
 ├─────────────────────┤
-│       Storage　　  　│ ← メッセージの永続化
+│      Storage        │ ← 会話データの永続化（必須）
 ├─────────────────────┤
-│    Vector Store　　　│ ← 過去の会話のSemantic Recall(オプション)
+│    Vector Store     │ ← セマンティック検索用（オプション）
 └─────────────────────┘
 ```
 
-## コンポーネントの責務
+## 各層の責務
 
 ### Memory層
 
-会話管理の複雑な処理を抽象化し、シンプルなAPIを提供。
+開発者が直接触れる唯一のインターフェース。Storage/Vector Storeの違いを意識せずに、統一されたAPIで全機能を利用可能。
 
-### Storage層
+### Storage層（必須）
 
-データの永続化を担当。複数のアダプターから選択可能。
+メッセージとメタデータを永続化。複数のアダプターから選択可能。
 
 -   `@mastra/dynamodb`  - AWS DynamoDB
 -   `@mastra/postgres`  - PostgreSQL
@@ -63,7 +62,7 @@ Mastra Memoryは、AIエージェントの会話管理に特化した包括的�
 
 ### Vector Store層（オプション）
 
-古い会話履歴をSemantic Recallで検索するためのベクトルデータベース。
+Semantic Recall機能を使う場合のみ必要。古い会話履歴をセマンティック検索するためのベクトルデータベース。
 
 # 各主要機能の詳細
 
@@ -95,29 +94,28 @@ const memory = new Memory({
 });
 ```
 
-### 【重要】 Resource と Thread
+### Resource と Thread
 
-Mastraは会話を2つの階層で管理します。
+Mastraでは、効率的な記憶管理のために会話を2つの階層で整理します。
 
-#### Resource（リソース）
+#### Resource（記憶の所有者）
 
-誰の記憶か・どこの記憶か等を表します。
-- ユーザーID → その人のすべての会話
-- チャンネルID → そのチャンネルのすべての会話
-- 組織ID → その組織のすべての会話
+「誰の・どこの記憶か」を識別します。Working Memoryやセマンティック検索のスコープを決定する重要な概念です。
 
-#### Thread（スレッド）
+#### Thread（個別の会話）
 
-個別の会話セッションを表します。
-- 1つの話題についての一連のやり取り
-- 問い合わせ番号やチケット番号に相当
+「どの会話か」を識別します。1つのトピックに関する一連のメッセージをグループ化する概念です。
 
+:::message
+Thread IDは全Resource間でグローバルに一意である必要があります。
+同じThread IDを異なるResourceで使い回すことはできません。
+:::
 
 ```ts
 // パターン1: スレッド独立型
 await agent.generate(query, {
   memory: {
-    resource: threadId, // 各スレッドが独立
+    resource: threadId, // 各スレッドが独立(resourceとthreadが同じ値)
     thread: { id: threadId }
   }
 });
@@ -133,31 +131,73 @@ await agent.generate(query, {
 
 ## 2. Working Memory
 
-Working Memoryは、通常の会話履歴（lastMessages）とは別に管理される、**AIがユーザーについて覚えておくべき情報を永続的に記録する機能**です。スコープ設定により、スレッド単位またはリソース横断的に記憶を保持できます。
+Working Memoryは、**AIが会話を通じて学んだ重要情報を永続的に記録する機能**です。通常の会話履歴（lastMessages）とは別に管理され、AIが自動的に`updateWorkingMemory`ツールを呼び出して更新します。
+スコープ設定により、スレッド単位またはリソース横断的に記憶を保持できます。
 
-### 具体例
+### 動作の仕組み
 
 ```
-User: 私は大阪在住のエンジニアで、Reactが得意です。
-AI:   [内部でWorking Memoryを更新: 居住地=大阪、職業=エンジニア、スキル=React]
-      承知しました！大阪でエンジニアをされているんですね。
+ユーザー: 「私は田中で、Reactが得意です。」
+    ↓
+AIの内部処理:
+  1. 情報を認識
+  2. updateWorkingMemoryツールを呼び出し
+  3. テンプレートに従って情報を保存
+    ↓
+AIの応答: 「田中さん、Reactが得意なんですね！」
 
---- 1週間後の別の会話 ---
+--- 数日後の別の会話 ---
 
-User: 私に合う勉強会を教えてください。
-AI:   大阪でReactの勉強会がありますよ！エンジニアの田中さんにぴったりです。
+User: 「私に合う勉強会を教えてください。」
+AI:   「大阪でReactの勉強会がありますよ！エンジニアの田中さんにぴったりです。」
 ```
 
 ### 設定方法
+
+Working Memoryのテンプレートは自由にカスタマイズ可能です。デフォルトでは基本的なユーザー情報を記録しますが、用途に応じて項目を追加・変更できます。
 
 ```ts
 const memory = new Memory({
   storage: storage,
   options: {
-    lastMessages: 20,
     workingMemory: {
       enabled: true,
-      scope: 'resource' // 'thread' または 'resource'
+      scope: 'resource', // 'thread' または 'resource'
+      // テンプレートをカスタマイズ
+      template: `
+# ユーザー情報
+- **名前**: 
+- **居住地**: 
+- **職業**: 
+- **興味・関心**: 
+`
+    }
+  }
+});
+```
+
+### JSONスキーマによる構造化
+
+より厳密なデータ管理が必要な場合、ZodまたはJSONSchemaを使用できます。
+
+```ts
+import { z } from 'zod';
+
+const userProfileSchema = z.object({
+  name: z.string().optional(),
+  location: z.string().optional(),
+  preferences: z.object({
+    language: z.string().optional(),
+    timezone: z.string().optional(),
+  }).optional(),
+});
+
+const memory = new Memory({
+  storage: storage,
+  options: {
+    workingMemory: {
+      enabled: true,
+      schema: userProfileSchema // Zodスキーマを指定
     }
   }
 });
@@ -165,60 +205,51 @@ const memory = new Memory({
 
 ## 3. Semantic Recall
 
-Semantic Recallは、**AIが関連する過去の会話を検索する機能**です。「前に話した〇〇」のような曖昧な言及でも、AIが通常の会話履歴（lastMessages）から外れた古い会話履歴から関連する内容を見つけ出します。
+Semantic Recallは、**セマンティック検索を使って関連する過去の会話を自動的に思い出す機能**です。通常の会話履歴（lastMessages）から外れた古いメッセージでも、意味的に関連する内容を検索してAIのコンテキストに含めます。
 
-### 具体例
+:::message alert
+Semantic Recallを使用するには、Storageとは別にVector Storeの設定が必須です。
+:::
+
+### 動作の流れ
 
 ```
---- 1ヶ月前の会話（通常の履歴からは外れている）---
-User: プロジェクトのデプロイはServerless Frameworkを使います。
-AI:   承知しました。
-
---- 今日の会話 ---
-User: デプロイ方法って何でしたっけ？
-AI:   [Semantic Recallで「デプロイ」に関連する過去の会話を発見]
-      以前お話しいただいたServerless Frameworkを使う方法ですね！
+1. ユーザーが質問
+   ↓
+2. 質問をベクトル化（埋め込み）
+   ↓
+3. Vector Storeで類似検索
+   ↓
+4. 関連する過去のメッセージを取得
+   ↓
+5. AIのコンテキストに追加して応答生成
 ```
 
 ### 設定方法
 
 ```ts
+import { Memory } from '@mastra/memory';
 import { Pinecone } from '@pinecone-database/pinecone';
 
-// Pineconeの初期化
-const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY,
-  environment: process.env.PINECONE_ENVIRONMENT
-});
-
-// MemoryにVector Storeを追加
 const memory = new Memory({
-  storage: storage,
-  vector: pinecone, // Vector Store追加
+  storage: storage,            // メッセージ保存用
+  vector: pinecone,            // セマンティック検索用（必須）
+  embedder: openai.embedding(  // 埋め込みモデル（オプション）
+    'text-embedding-3-small'
+  ),
   options: {
     lastMessages: 20,
     semanticRecall: {
       enabled: true,
-      scope: 'resource', // 検索範囲
-      topK: 3,           // 上位3件を取得
-      messageRange: {    // 各結果の前後文脈
+      topK: 5,         // 取得する類似メッセージ数
+      messageRange: {  // 各結果の前後文脈
         before: 2,
         after: 2
-      }
+      },
+      scope: 'resource'  // 'thread' または 'resource'
     }
   }
 });
-```
-
-### メッセージ取得の優先順位
-
-```typescript
-// 取得されるメッセージの構成
-const messages = [
-  ...現在のスレッドの最新N件, // lastMessages
-  ...SemanticRecall,      // topK + messageRange
-  ...WorkingMemory,
-];
 ```
 
 ## 4. メモリプロセッサ
@@ -367,9 +398,6 @@ const memory = new Memory({
 # 実践例: Slack BotでのMemory活用
 
 実際のSlack botでMastra Memoryを使う場合の実装例を考えてみます。
-
-## Slackの特性を活かした設計
-
 Slackには**スレッド**という概念があるので、これをMastraのThread IDとして活用できます。
 
 ```typescript
@@ -414,12 +442,11 @@ async function handleSlackMessage(event: SlackEvent) {
 
 この設定により、以下が可能となります。
 - **各Slackスレッド内**: 最新30件の会話履歴を保持
-- **チャンネル全体**: プロジェクト情報、チームメンバー、決定事項などをWorking Memoryで共有
+- **Slackチャンネル全体**: プロジェクト情報、決定事項などをWorking Memoryで共有
 
 # まとめ
 
-これらの用途に合わせた適切な設定により、文脈を理解し、ユーザーの特性を記憶する賢いAIアシスタントを構築できます。
-ほぼ自分用メモとしてまとめたので、何か間違った理解等あればご指摘いただけると幸いです。
+用途に合わせた適切な設定により、文脈を理解し、ユーザーの特性を記憶する賢いAIアシスタントを構築できます。何か間違った理解等あればご指摘いただけると幸いです。
 
 # 参考リンク
 
