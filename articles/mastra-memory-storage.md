@@ -3,6 +3,7 @@ title: "MastraのMemory機能を深掘る"
 emoji: "💬"
 type: "tech"
 topics: ["mastra", "ai", "aiエージェント", "nodejs", "dynamodb"]
+publication_name: "nextbeat"
 published: false
 ---
 
