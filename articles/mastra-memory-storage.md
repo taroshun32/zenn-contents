@@ -4,7 +4,7 @@ emoji: "💬"
 type: "tech"
 topics: ["mastra", "ai", "aiエージェント", "nodejs", "dynamodb"]
 publication_name: "nextbeat"
-published: false
+published: true
 ---
 
 
