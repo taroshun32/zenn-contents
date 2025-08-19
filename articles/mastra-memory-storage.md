@@ -1,5 +1,5 @@
 ---
-title: "MastraのMemory機能を深掘る"
+title: "MastraのMemory機能を深掘る 〜AIエージェントの記憶システム実践ガイド〜"
 emoji: "💬"
 type: "tech"
 topics: ["mastra", "ai", "aiエージェント", "nodejs", "dynamodb"]
