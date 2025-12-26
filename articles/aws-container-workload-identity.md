@@ -188,7 +188,8 @@ gcloud iam workload-identity-pools providers create-aws "your-provider" \
   --project="YOUR_PROJECT_ID" \
   --location="global" \
   --workload-identity-pool="your-pool" \
-  --account-id="YOUR_AWS_ACCOUNT_ID"
+  --account-id="YOUR_AWS_ACCOUNT_ID" \
+  --attribute-mapping="google.subject=assertion.arn,attribute.aws_role=assertion.arn.extract('assumed-role/{role}/')"
 ```
 
 ### 3. サービスアカウントへのIAMバインディング
@@ -198,7 +199,7 @@ gcloud iam service-accounts add-iam-policy-binding \
   YOUR_SA@YOUR_PROJECT.iam.gserviceaccount.com \
   --project=YOUR_PROJECT_ID \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/projects/YOUR_PROJECT_NUMBER/locations/global/workloadIdentityPools/your-pool/attribute.aws_role/arn:aws:sts::YOUR_AWS_ACCOUNT:assumed-role/YOUR_ROLE_NAME"
+  --member="principalSet://iam.googleapis.com/projects/YOUR_PROJECT_NUMBER/locations/global/workloadIdentityPools/your-pool/attribute.aws_role/YOUR_ROLE_NAME"
 ```
 
 ### 4. サービスアカウントへのBigQuery権限付与
