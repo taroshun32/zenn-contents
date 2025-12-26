@@ -99,27 +99,23 @@ import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 
 export class ContainerAwsCredentialsSupplier implements AwsSecurityCredentialsSupplier {
   private readonly region: string;
+  private readonly credentialsProvider: ReturnType<typeof fromNodeProviderChain>;
 
   constructor() {
     const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
     if (!region) {
-      throw new Error(
-        "AWS region not found. Set AWS_REGION or AWS_DEFAULT_REGION environment variable."
-      );
+      throw new Error("AWS region not found.");
     }
     this.region = region;
+    this.credentialsProvider = fromNodeProviderChain();
   }
 
-  async getAwsRegion(_context: ExternalAccountSupplierContext): Promise<string> {
+  async getAwsRegion(): Promise<string> {
     return this.region;
   }
 
-  async getAwsSecurityCredentials(
-    _context: ExternalAccountSupplierContext
-  ): Promise<AwsSecurityCredentials> {
-    const credentialsProvider = fromNodeProviderChain();
-    const credentials = await credentialsProvider();
-
+  async getAwsSecurityCredentials(): Promise<AwsSecurityCredentials> {
+    const credentials = await this.credentialsProvider();
     return {
       accessKeyId: credentials.accessKeyId,
       secretAccessKey: credentials.secretAccessKey,
