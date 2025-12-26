@@ -1,5 +1,5 @@
 ---
-title: "AWSコンテナ環境からBigQueryへWorkload Identity Federationで接続する"
+title: "AWSコンテナ環境からGoogle CloudへWorkload Identity Federationで接続する"
 emoji: "🎉"
 type: "tech"
 topics: ["AWS", "googlecloud", "workloadidentity", "bigquery", "apprunner"]
@@ -79,6 +79,10 @@ GCPコンソールでWorkload Identity Federation設定を生成すると、EC2�
 npm install google-auth-library @google-cloud/bigquery @aws-sdk/credential-providers
 ```
 
+:::message
+今回はBigQueryへの接続を例として実装します。
+:::
+
 ### カスタムAWS認証情報サプライヤー
 
 `google-auth-library`の`AwsSecurityCredentialsSupplier`インターフェースを実装し、AWS SDK v3の`fromNodeProviderChain`を使用します。
@@ -130,6 +134,8 @@ export class ContainerAwsCredentialsSupplier implements AwsSecurityCredentialsSu
 ### BigQueryクライアント
 
 カスタムサプライヤーを`AwsClient`に渡し、`BigQuery`クライアントの`authClient`として使用します。
+
+> Cloud Storage、Pub/Sub等の他のGoogle Cloudサービスでも同様に使用できます。
 
 ```typescript
 // src/db/bigquery-client.ts
@@ -218,7 +224,7 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 
 ## まとめ
 
-AWSコンテナ環境からGCPリソースにWorkload Identity Federationで接続する際のポイントをまとめます。
+AWSコンテナ環境からGoogle CloudリソースにWorkload Identity Federationで接続する際のポイントをまとめます。
 
 - GCPが生成する設定ファイルはEC2（IMDS）を前提としており、コンテナ環境ではそのまま使えない。
 - `google-auth-library`の`AwsSecurityCredentialsSupplier`インターフェースを実装することで対応可能。
