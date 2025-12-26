@@ -1,6 +1,6 @@
 ---
 title: "AWSコンテナ環境からGoogle CloudへWorkload Identity Federationで接続する"
-emoji: "🎉"
+emoji: "☁"
 type: "tech"
 topics: ["AWS", "googlecloud", "workloadidentity", "bigquery", "apprunner"]
 publication_name: "nextbeat"
