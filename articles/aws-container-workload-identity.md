@@ -13,7 +13,7 @@ published: false
 
 ## 概要
 
-Workload Identity Federationは、AWSやAzureなどの外部IDプロバイダーの認証情報を使って、GCPリソースにアクセスするための仕組みです。サービスアカウントキー（JSONファイル）を使わずに、よりセキュアな認証が可能になります。
+Workload Identity Federationは、AWSやAzureなどの外部IDプロバイダーの認証情報を使って、Google Cloudリソースにアクセスするための仕組みです。サービスアカウントキー（JSONファイル）を使わずに、よりセキュアな認証が可能になります。
 
 ## 認証フロー
 
@@ -24,8 +24,8 @@ sequenceDiagram
     participant App as アプリケーション
     participant SDK as AWS SDK<br/>(fromNodeProviderChain)
     participant Container as コンテナ認証情報<br/>(169.254.170.2)
-    participant STS as GCP STS<br/>(sts.googleapis.com)
-    participant IAM as GCP IAM Credentials<br/>(iamcredentials.googleapis.com)
+    participant STS as Google Cloud STS<br/>(sts.googleapis.com)
+    participant IAM as Google Cloud IAM Credentials<br/>(iamcredentials.googleapis.com)
     participant BQ as BigQuery API
 
     App->>SDK: 1. 認証情報を要求
@@ -37,7 +37,7 @@ sequenceDiagram
 
     App->>STS: 4. POST /v1/token<br/>(署名付きAWSリクエスト)
     Note over STS: AWS署名を検証<br/>Workload Identity Pool確認
-    STS-->>App: GCPアクセストークン
+    STS-->>App: Google Cloudアクセストークン
 
     App->>IAM: 5. POST /generateAccessToken
     Note over IAM: サービスアカウント<br/>偽装権限を確認
@@ -54,17 +54,17 @@ sequenceDiagram
 - App Runner / ECS / Fargate でアプリケーションが動作していること
 - タスク/サービスにIAMロールが割り当てられていること
 
-### GCP側
+### Google Cloud側
 
 - Workload Identity Poolが作成されていること
 - AWS Providerが追加されていること
 - サービスアカウントにIAMバインディングが設定されていること
 
-設定方法は後述の「GCP設定」セクション、または[公式ドキュメント](https://cloud.google.com/iam/docs/workload-identity-federation-with-other-clouds)を参照してください。
+設定方法は後述の「Google Cloud設定」セクション、または[公式ドキュメント](https://cloud.google.com/iam/docs/workload-identity-federation-with-other-clouds)を参照してください。
 
 ## EC2とコンテナ環境の違い
 
-GCPコンソールでWorkload Identity Federation設定を生成すると、EC2のInstance Metadata Service（IMDS）を前提とした設定が出力されます。コンテナ環境ではこの設定をそのまま使用できないため、カスタム実装が必要です。
+Google CloudコンソールでWorkload Identity Federation設定を生成すると、EC2のInstance Metadata Service（IMDS）を前提とした設定が出力されます。コンテナ環境ではこの設定をそのまま使用できないため、カスタム実装が必要です。
 
 | 環境                        | メタデータエンドポイント | 認証情報取得方法                                                             |
 | --------------------------- | ------------------------ | ---------------------------------------------------------------------------- |
@@ -159,14 +159,14 @@ function createBigQueryClient(): BigQuery {
   });
 
   return new BigQuery({
-    projectId: "your-gcp-project",
+    projectId: "your-project-id",
     location: "US",
     authClient,
   });
 }
 ```
 
-## GCP設定
+## Google Cloud設定
 
 ### 1. Workload Identity Poolの作成
 
@@ -223,7 +223,7 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 
 AWSコンテナ環境からGoogle CloudリソースにWorkload Identity Federationで接続する際のポイントをまとめます。
 
-- GCPが生成する設定ファイルはEC2（IMDS）を前提としており、コンテナ環境ではそのまま使えない。
+- Google Cloudが生成する設定ファイルはEC2（IMDS）を前提としており、コンテナ環境ではそのまま使えない。
 - `google-auth-library`の`AwsSecurityCredentialsSupplier`インターフェースを実装することで対応可能。
 - `@aws-sdk/credential-providers`の`fromNodeProviderChain`を使うと、環境を自動検出してくれるため実装がシンプルになる。
 
