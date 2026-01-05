@@ -4,7 +4,7 @@ emoji: "☁"
 type: "tech"
 topics: ["AWS", "googlecloud", "workloadidentity", "bigquery", "apprunner"]
 publication_name: "nextbeat"
-published: false
+published: true
 ---
 
 ## はじめに
