@@ -1,5 +1,5 @@
 ---
-title: "vibe-codingでiOSアプリを1本リリースしてみた話 - モバイル未経験エンジニアの技術選定と反省点"
+title: "vibe-codingで持ち物管理のiOSアプリをリリースしてみた話 - モバイル未経験エンジニアの技術選定と反省点"
 emoji: "🏠"
 type: "idea"
 topics: ["expo", "reactnative", "supabase", "revenuecat", "個人開発"]
